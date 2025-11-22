@@ -31,12 +31,15 @@ BEGIN
 			IF hard_reset = '1' THEN
 				counter  <= 0;
 				tick_1hz <= '0';
+				
 			ELSIF counter = MAX_COUNT THEN -- Every 50M cycles, tick pulses once 
 				counter  <= 0;
 				tick_1hz <= '1';
+				
 			ELSE
 				counter  <= counter + 1;
 				tick_1hz <= '0';
+				
 			END IF;
 		END IF;
 	END PROCESS;

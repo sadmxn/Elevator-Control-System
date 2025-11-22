@@ -15,9 +15,9 @@ ENTITY scheduler IS
 	PORT (
 		current_floor : IN  std_logic_vector(1 DOWNTO 0);
 		req_lat       : IN  std_logic_vector(N_FLOORS-1 DOWNTO 0); -- Latched floor requests (one bit per floor)
-		has_above     : OUT std_logic; -- '1' if there is at least one request above current_floor
-		has_below     : OUT std_logic;
-		here_req      : OUT std_logic
+		has_above     : OUT std_logic; -- '1' If any request  above current_floor
+		has_below     : OUT std_logic; -- '1' If any request below current_floor
+		here_req      : OUT std_logic  -- '1' If any request at current_floor
 	);
 END ENTITY scheduler;
 
@@ -25,18 +25,18 @@ ARCHITECTURE LogicFunction OF scheduler IS
 
 BEGIN
 	PROCESS(req_lat, current_floor)
+	
 		VARIABLE above, below : std_logic := '0';
 		VARIABLE cfloor_int   : integer RANGE 0 TO N_FLOORS-1;
+		
 	BEGIN
-		-- Convert 2-bit floor index to integer
-		cfloor_int := TO_INTEGER(std_logic_vector(current_floor));
+		-- *CONVERT FLOOR INDEX TO INTEGER*
+		cfloor_int := TO_INTEGER(unsigned(current_floor));
 
 		above := '0';
 		below := '0';
 
-		-- Scan all floors to see if there are requests above or below
-		
-		FOR i IN 0 TO N_FLOORS-1 LOOP
+		FOR i IN 0 TO N_FLOORS-1 LOOP -- Scan ALL floors for any request above / below
 			IF req_lat(i) = '1' THEN
 				IF i > cfloor_int THEN
 					above := '1';
@@ -49,12 +49,12 @@ BEGIN
 		has_above <= above;
 		has_below <= below;
 
-		-- Request at current floor?
-		IF req_lat(cfloor_int) = '1' THEN
+		IF req_lat(cfloor_int) = '1' THEN -- If request is at current floor
 			here_req <= '1';
 		ELSE
 			here_req <= '0';
 		END IF;
+		
 	END PROCESS;
 	
 END ARCHITECTURE LogicFunction;

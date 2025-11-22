@@ -11,10 +11,10 @@ ENTITY timers IS
 	);
 	PORT (
 		clk    : IN  std_logic;  -- System Clock
-		tick   : IN  std_logic;  -- 1Hz tick from clk_div
+		tick   : IN  std_logic;  -- 1Hz tick from clk_div (one-cycle pulse)
 		enable : IN  std_logic;  
 		reset  : IN  std_logic;  -- Active-high reset
-		done   : OUT std_logic   -- '1' when count reaches MAX_COUNT
+		done   : OUT std_logic   -- Single-cycle pulse when count reaches MAX_COUNT
 	);
 END ENTITY timers;
 
@@ -27,22 +27,31 @@ BEGIN
 	PROCESS(clk)
 	BEGIN
 		IF rising_edge(clk) THEN
-			IF reset = '1' THEN
+			IF reset = '1' THEN     			  -- Reset takes first priorty
 				count    <= 0;
 				done_reg <= '0';
-
+				
 			ELSIF enable = '1' THEN
-				IF tick = '1' THEN
-					IF count = MAX_COUNT THEN
-						done_reg <= '1'; -- STAY '1' UNTIL RESET OR enable='0'
+				IF tick = '1' THEN 				  -- Advance count and produce pulse exactly when reaching MAX_COUNT.
+					IF count = MAX_COUNT - 1 THEN
+						count    <= MAX_COUNT;
+						done_reg <= '1';          -- Pulse high this cycle only
+						
+					ELSIF count = MAX_COUNT THEN -- Already at terminal count: keep saturated, no pulse.
+						count    <= MAX_COUNT;
+						done_reg <= '0';
 					ELSE
 						count    <= count + 1;
 						done_reg <= '0';
 					END IF;
+					
+				ELSE
+					IF count = MAX_COUNT THEN 	  -- No tick: no changes, ensure pulse cleared.
+						done_reg <= '0';
+					END IF;
 				END IF;
-
-			ELSE
-				-- TIMER DISABLED: CLEAR COUNT & done
+			
+			ELSE 										 -- Disabled: reset internal state.
 				count    <= 0;
 				done_reg <= '0';
 			END IF;
