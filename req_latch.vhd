@@ -5,7 +5,7 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 
-ENTITY RequestLatch IS
+ENTITY req_latch IS
 
     GENERIC (
         N_FLOORS : integer := 4
@@ -14,15 +14,13 @@ ENTITY RequestLatch IS
         clk        : IN  std_logic;
         soft_reset : IN  std_logic;  -- Active-high
         hard_reset : IN  std_logic;  -- Active-high
-
         req_in     : IN  std_logic_vector(N_FLOORS-1 DOWNTO 0); -- From switches
         clear_req  : IN  std_logic_vector(N_FLOORS-1 DOWNTO 0); 
-
         req_lat    : OUT std_logic_vector(N_FLOORS-1 DOWNTO 0)  -- Latched requests
     );
-END ENTITY RequestLatch;
+END ENTITY req_latch;
 
-ARCHITECTURE LogicFunction OF RequestLatch IS
+ARCHITECTURE LogicFunction OF req_latch IS
 
     SIGNAL latched_req : std_logic_vector(N_FLOORS-1 DOWNTO 0) := (OTHERS => '0');
 	 
