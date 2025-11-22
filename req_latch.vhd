@@ -4,49 +4,40 @@
 
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
-USE ieee.numeric_std.ALL;
 
-ENTITY req_latch IS
+ENTITY RequestLatch IS
 
-	GENERIC (
-		N_FLOORS : unsigned := 4
-	);
-	PORT (
-		clk                  : IN  std_logic;
-		tick_1hz             : IN  std_logic;
-		soft_reset           : IN  std_logic; -- Clears pending requests only
-		hard_reset           : IN  std_logic; -- Clears everything
-		estop                : IN  std_logic; -- Emergency stop
-		new_req_floor        : IN  integer RANGE 0 TO N_FLOORS - 1;
-		new_req_valid        : IN  std_logic;
-		clear_serviced_floor : IN  integer RANGE 0 TO N_FLOORS - 1;
-		clear_valid          : IN  std_logic; -- Asserted after door cycle completion
-														  -- If both new_req_valid and clear_valid high: clear takes priorty
-		reqs             		: OUT std_logic_vector(N_FLOORS - 1 DOWNTO 0)
-	);
-END ENTITY;
+    GENERIC (
+        N_FLOORS : integer := 4
+    );
+    PORT (
+        clk        : IN  std_logic;
+        soft_reset : IN  std_logic;  -- Active-high
+        hard_reset : IN  std_logic;  -- Active-high
 
-ARCHITECTURE LogicFunction OF req_latch IS
+        req_in     : IN  std_logic_vector(N_FLOORS-1 DOWNTO 0); -- From switches
+        clear_req  : IN  std_logic_vector(N_FLOORS-1 DOWNTO 0); 
 
-	SIGNAL reqs : std_logic_vector(N_FLOORS-1 DOWNTO 0) := (OTHERS => '0');
-	
+        req_lat    : OUT std_logic_vector(N_FLOORS-1 DOWNTO 0)  -- Latched requests
+    );
+END ENTITY RequestLatch;
+
+ARCHITECTURE LogicFunction OF RequestLatch IS
+
+    SIGNAL latched_req : std_logic_vector(N_FLOORS-1 DOWNTO 0) := (OTHERS => '0');
+	 
 BEGIN
-	PROCESS (clk)
-	BEGIN
-		IF rising_edge(clk) THEN
-			IF hard_reset = '1' OR soft_reset = '1' THEN
-				reqs <= (OTHERS => '0');
-			ELSIF estop = '1' THEN 			 -- Hold state
-				reqs <= reqs;
-			ELSE
-				IF new_req_valid = '1' THEN -- Latch new request
-					reqs(new_req_floor) <= '1';
-				END IF;
-				IF clear_valid = '1' THEN 	 -- Clear serviced floor
-					reqs(clear_serviced_floor) <= '0';
-				END IF;
-			END IF;
-		END IF;
-	END PROCESS;
-	
-END ARCHITECTURE;
+    PROCESS(clk)
+    BEGIN
+        IF rising_edge(clk) THEN
+            IF (soft_reset = '1') OR (hard_reset = '1') THEN
+                latched_req <= (OTHERS => '0');
+            ELSE   -- Latch new requests, clear served ones
+                latched_req <= (latched_req OR req_in) AND (NOT clear_req); -- (latched_req OR req_in) adds new floor to the queue
+																									 -- AND (NOT clear_req) clears the served floor from the queue
+            END IF;
+        END IF;
+    END PROCESS;
+
+    req_lat <= latched_req;
+END ARCHITECTURE LogicFunction;
