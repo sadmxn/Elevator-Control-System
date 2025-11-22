@@ -15,7 +15,7 @@ ENTITY clk_div IS
 	PORT (
 		clk        : IN  std_logic;
 		hard_reset : IN  std_logic;
-		tick_1hz   : OUT std_logic
+		tick_1hz   : OUT std_logic -- Ticks high every 1 second
 	);	
 END ENTITY;
 
