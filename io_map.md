@@ -8,7 +8,7 @@ This document maps logical signals in the VHDL design to physical board resource
 
 | Signal      | Board Resource    | Pin Name   | Description           |
 |-------------|-------------------|------------|-----------------------|
-| `CLOCK_50`  | 50 MHz oscillator | `CLOCK_50` | Main system clock     |
+| `CLOCK_50`  | 50 MHz oscillator | `PIN_AF14` | Main system clock     |
 
 ---
 
@@ -16,9 +16,9 @@ This document maps logical signals in the VHDL design to physical board resource
 
 | Signal       | Board Resource | Pin       | Active | Description                       |
 |--------------|----------------|-----------|--------|-----------------------------------|
-| hard_reset   | KEY[0]         | `KEY[0]`  | LOW    | Full system reset (floor\u21920)      |
-| soft_reset   | KEY[1]         | `KEY[1]`  | LOW    | Clears requests only              |
-| estop        | SW[9]          | `SW[9]`   | HIGH   | Emergency stop                    |
+| hard_reset   | KEY[0]         | `PIN_AJ4` | LOW    | Full system reset (floor\u21920)      |
+| soft_reset   | KEY[1]         | `PIN_AK4` | LOW    | Clears requests only              |
+| estop        | SW[9]          | `PIN_AA30`| HIGH   | Emergency stop                    |
 
 **Note**: Keys inverted in top-level: `hard_reset <= NOT KEY(0)`
 
@@ -26,9 +26,9 @@ This document maps logical signals in the VHDL design to physical board resource
 
 ## Floor Request Inputs
 
-| Signal          | Board Resource | Pins              | Description                    |
-|-----------------|----------------|-------------------|--------------------------------|
-| `req_in(3..0)`  | SW[3:0]        | `SW[3]` to `SW[0]`| Direct floor request (4 bits) |
+| Signal          | Board Resource | Pins                                   | Description                   |
+|-----------------|----------------|----------------------------------------|-------------------------------|
+| `req_in(3..0)`  | SW[3:0]        | `PIN_AC30, PIN_AB28, PIN_Y27, PIN_AB30`| Direct floor request (4 bits) |
 
 - Each switch corresponds to one floor (0-3 internal, displayed as 1-4)
 - Switch held high latches request until serviced
@@ -63,18 +63,18 @@ This document maps logical signals in the VHDL design to physical board resource
 
 ### Normal Operation (estop_active='0')
 
-| Signal            | Board Resource | Pin       | Description                  |
-|-------------------|----------------|-----------|------------------------------|
-| `req_lat(0)`      | LEDR[0]        | `LEDR[0]` | Floor 1 requested            |
-| `req_lat(1)`      | LEDR[1]        | `LEDR[1]` | Floor 2 requested            |
-| `req_lat(2)`      | LEDR[2]        | `LEDR[2]` | Floor 3 requested            |
-| `req_lat(3)`      | LEDR[3]        | `LEDR[3]` | Floor 4 requested            |
-| `LEDR[4]`         | LEDR[4]        | `LEDR[4]` | Unused (0)                   |
-| `dir_down`        | LEDR[5]        | `LEDR[5]` | Moving down indicator        |
-| `dir_up`          | LEDR[6]        | `LEDR[6]` | Moving up indicator          |
-| `door_closing`    | LEDR[7]        | `LEDR[7]` | Door closing indicator       |
-| `door_open`       | LEDR[8]        | `LEDR[8]` | Door open indicator          |
-| `estop_active`    | LEDR[9]        | `LEDR[9]` | ESTOP off (0)                |
+| Signal            | Board Resource | Pin        | Description                  |
+|-------------------|----------------|------------|------------------------------|
+| `req_lat(0)`      | LEDR[0]        | `PIN_AA24` | Floor 1 requested            |
+| `req_lat(1)`      | LEDR[1]        | `PIN_AB23` | Floor 2 requested            |
+| `req_lat(2)`      | LEDR[2]        | `PIN_AC23` | Floor 3 requested            |
+| `req_lat(3)`      | LEDR[3]        | `PIN_AD24` | Floor 4 requested            |
+| `LEDR[4]`         | LEDR[4]        | `PIN_AG25` | Unused (0)                   |
+| `dir_down`        | LEDR[5]        | `PIN_AF25` | Moving down indicator        |
+| `dir_up`          | LEDR[6]        | `PIN_AE24` | Moving up indicator          |
+| `door_closing`    | LEDR[7]        | `PIN_AF24` | Door closing indicator       |
+| `door_open`       | LEDR[8]        | `PIN_AB22` | Door open indicator          |
+| `estop_active`    | LEDR[9]        | `PIN_AC22` | ESTOP off (0)                |
 
 ### Emergency Stop (estop_active='1')
 
@@ -86,13 +86,13 @@ This document maps logical signals in the VHDL design to physical board resource
 
 ## Summary Table
 
-| Category       | Inputs        | Outputs           |
-|----------------|---------------|-------------------|
-| Control        | 3 (2 KEY, 1 SW)| —                |
-| Requests       | 4 (SW[3:0])   | —                 |
-| Status LEDs    | —             | 10 (LEDR)         |
-| Display        | —             | 6 HEX digits      |
-| **Total**      | **7**         | **16**            |
+| Category       | Inputs         | Outputs           |
+|----------------|----------------|-------------------|
+| Control        | 3 (2 KEY, 1 SW)| —                 |
+| Requests       | 4 (SW[3:0])    | —                 |
+| Status LEDs    | —              | 10 (LEDR)         |
+| Display        | —              | 6 HEX digits      |
+| **Total**      | **7**          | **16**            |
 
 DE10-Standard resources used efficiently with room for extensions.
 
@@ -140,11 +140,11 @@ set_location_assignment PIN_AB23 -to LEDR[1]
 
 ## Reset and Control Inputs
 
-| Signal         | Board Resource      | Suggested Pin  | Description                           |
-|----------------|---------------------|----------------|---------------------------------------|
-| `hard_reset`   | KEY[0]              | `KEY[0]`       | Active low; full system reset         |
-| `soft_reset`   | KEY[1]              | `KEY[1]`       | Active low; clears requests only      |
-| `estop`        | SW[9]               | `SW[9]`        | Emergency stop (active high)          |
+| Signal         | Board Resource      | Suggested Pin   | Description                           |
+|----------------|---------------------|-----------------|---------------------------------------|
+| `hard_reset`   | KEY[0]              | `PIN_AJ4`       | Active low; full system reset         |
+| `soft_reset`   | KEY[1]              | `PIN_AK4`       | Active low; clears requests only      |
+| `estop`        | SW[9]               | `PIN_AA30`      | Emergency stop (active high)          |
 
 **Note**: KEY buttons on DE10 are active low; invert in top-level or constraints.
 
@@ -293,3 +293,4 @@ DE10-Standard provides ample resources:
 - 6 HEX displays (HEX5-HEX0)
 
 Design easily fits with room for extensions.
+
