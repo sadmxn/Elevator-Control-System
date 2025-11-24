@@ -1,0 +1,115 @@
+-- Sheikh Mohammad Sadman Sakib-301604533; Kenny Nguyen-301614035 ; Rodrigo Villalon-301621226
+
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity timers_tb is
+end entity;
+
+architecture behaviour of timers_tb is
+    
+    constant MAX_COUNT_C : integer := 3;  
+
+    signal clk    : std_logic := '0';
+    signal tick   : std_logic := '0';
+    signal enable : std_logic := '0';
+    signal reset  : std_logic := '0';
+    signal done   : std_logic;
+
+begin
+
+    DUT: entity work.timers
+        generic map (
+            MAX_COUNT => MAX_COUNT_C
+        )
+        port map (
+            clk    => clk,
+            tick   => tick,
+            enable => enable,
+            reset  => reset,
+            done   => done
+        );
+
+      --- 10 ns period clock
+    clkGenerator : process
+    begin
+        clk <= '0';
+        wait for 5 ns;
+        clk <= '1';
+        wait for 5 ns;
+    end process;
+
+    stim_proc : process
+    begin
+    
+ --Initial reset:
+        reset  <= '1';
+        enable <= '0';
+        tick   <= '0';
+
+        wait for 40 ns;         -- hold reset
+
+        reset <= '0';           -- release reset
+
+        wait for 20 ns;         -- done should stay at low (0)
+
+
+        -- TEST 1: enable timer, send tick pulses
+        -- MAX_COUNT = 3, therefore 'done' will go high on 3rd tick.
+
+            enable <= '1';
+
+            -- Tick 1
+            tick <= '1';
+            wait for 10 ns;         -- 1 full clock period with tick high
+            tick <= '0';
+            wait for 10 ns;         
+
+            -- Tick 2
+            tick <= '1';
+            wait for 10 ns;
+            tick <= '0';
+            wait for 10 ns;
+
+            -- Tick 3  [should cause done to pulse high for one cycle]
+            tick <= '1';
+            wait for 10 ns;
+            tick <= '0';
+            wait for 20 ns; 
+            
+        -- [TEST 1 ENDED]
+
+        -- TEST 2: show enable low clears state
+            enable <= '0';
+            wait for 30 ns;         -- while disabled, done should stay low
+        -- [TEST 2 ENDED]
+
+        
+        -- TEST 3: repeat test 1 to show it works repeatedly
+        
+        enable <= '1';
+
+            -- Tick 1
+            tick <= '1';
+            wait for 10 ns;        
+            tick <= '0';
+            wait for 10 ns;         
+
+            -- Tick 2
+            tick <= '1';
+            wait for 10 ns;
+            tick <= '0';
+            wait for 10 ns;
+
+            -- Tick 3  [should cause done to pulse high for one cycle]
+            tick <= '1';
+            wait for 10 ns;
+            tick <= '0';
+            wait for 20 ns; 
+        -- [TEST 3 ENDED]
+        wait for 40 ns;
+
+        wait;  -- stop forever
+    end process;
+
+end architecture behaviour;
