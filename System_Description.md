@@ -6,7 +6,7 @@
 
 ---
 
-## Executive Summary
+## Summary
 
 This project implements a complete elevator control system in VHDL targeting the Intel DE10-Standard FPGA board. The design supports a configurable number of floors (default 4), directional scheduling policy, and full state management including movement, door control, emergency stop, and reset behaviors.
 
@@ -117,3 +117,4 @@ This elevator control system demonstrates a complete, modular VHDL design suitab
 - ENSC 252 Final Project Specification
 - Intel DE10-Standard User Manual
 - IEEE 1076-2008 VHDL Standard
+
