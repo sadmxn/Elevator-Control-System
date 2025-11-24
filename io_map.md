@@ -50,8 +50,8 @@ This document maps logical signals in the VHDL design to physical board resource
 **Messages** (HEX5-2, priority order):
 1. ESTOP active → **"ESTOP"**
 2. Door open → **"OPEN"**
-3. Door closing → **"CLSE"**
-4. Moving up → **"UP  "** (HEX5-4 only)
+3. Door closing → **"CLOSE"**
+4. Moving up → **"UP"** (HEX5-4 only)
 5. Moving down → **"down"**
 6. Otherwise → **"IdLE"**
 
@@ -293,4 +293,5 @@ DE10-Standard provides ample resources:
 - 6 HEX displays (HEX5-HEX0)
 
 Design easily fits with room for extensions.
+
 
