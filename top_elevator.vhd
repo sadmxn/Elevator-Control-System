@@ -34,24 +34,24 @@ ARCHITECTURE LogicFunction OF top_elevator IS
 	SIGNAL estop       : std_logic;
 
 	-- REQUEST / CONTROL SIGNALS
-	SIGNAL req_in        : std_logic_vector(N_FLOORS-1 DOWNTO 0);
-	SIGNAL req_lat       : std_logic_vector(N_FLOORS-1 DOWNTO 0);
-	SIGNAL clear_req     : std_logic_vector(N_FLOORS-1 DOWNTO 0);
-	SIGNAL current_floor : std_logic_vector(1 DOWNTO 0); -- internal 0..3, display shows 1..4
-	SIGNAL has_above     : std_logic;
-	SIGNAL has_below     : std_logic;
-	SIGNAL here_req        : std_logic;
-	SIGNAL travel_done     : std_logic;
-	SIGNAL door_done       : std_logic;
-	SIGNAL door_close_done : std_logic;
-	SIGNAL travel_enable   : std_logic;
-	SIGNAL door_enable     : std_logic;
+	SIGNAL req_in        	 : std_logic_vector(N_FLOORS-1 DOWNTO 0);
+	SIGNAL req_lat       	 : std_logic_vector(N_FLOORS-1 DOWNTO 0);
+	SIGNAL clear_req     	 : std_logic_vector(N_FLOORS-1 DOWNTO 0);
+	SIGNAL current_floor 	 : std_logic_vector(1 DOWNTO 0); -- internal 0..3, display shows 1..4
+	SIGNAL has_above     	 : std_logic;
+	SIGNAL has_below       	 : std_logic;
+	SIGNAL here_req        	 : std_logic;
+	SIGNAL travel_done     	 : std_logic;
+	SIGNAL door_done       	 : std_logic;
+	SIGNAL door_close_done 	 : std_logic;
+	SIGNAL travel_enable   	 : std_logic;
+	SIGNAL door_enable       : std_logic;
 	SIGNAL door_close_enable : std_logic;
-	SIGNAL door_open_sig   : std_logic;
-	SIGNAL door_closing_sig : std_logic;
-	SIGNAL dir_up_sig    : std_logic;
-	SIGNAL dir_down_sig  : std_logic;
-	SIGNAL estop_active  : std_logic;
+	SIGNAL door_open_sig   	 : std_logic;
+	SIGNAL door_closing_sig  : std_logic;
+	SIGNAL dir_up_sig    	 : std_logic;
+	SIGNAL dir_down_sig      : std_logic;
+	SIGNAL estop_active  	 : std_logic;
 
 BEGIN
 	-- INPUT MAPPING
@@ -99,26 +99,26 @@ BEGIN
 	controller_inst : ENTITY work.controller_fsm
 		GENERIC MAP (N_FLOORS => N_FLOORS)
 		PORT MAP (
-			clk           => CLOCK_50,
-			soft_reset    => soft_reset,
-			hard_reset    => hard_reset,
-			estop         => estop,
-			has_above     => has_above,
-			has_below     => has_below,
-			here_req      => here_req,
-			travel_done   => travel_done,
-			door_done     => door_done,
-			door_close_done => door_close_done,
-			travel_enable => travel_enable,
-			door_enable   => door_enable,
+			clk           	 	=> CLOCK_50,
+			soft_reset    	   => soft_reset,
+			hard_reset    	   => hard_reset,
+			estop         	   => estop,
+			has_above     	 	=> has_above,
+			has_below     	 	=> has_below,
+			here_req        	=> here_req,
+			travel_done   	 	=> travel_done,
+			door_done     	 	=> door_done,
+			door_close_done 	=> door_close_done,
+			travel_enable 	 	=> travel_enable,
+			door_enable   	 	=> door_enable,
 			door_close_enable => door_close_enable,
-			clear_req     => clear_req,
-			current_floor => current_floor,
-			door_open     => door_open_sig,
-			door_closing  => door_closing_sig,
-			dir_up        => dir_up_sig,
-			dir_down      => dir_down_sig,
-			estop_active  => estop_active
+			clear_req     		=> clear_req,
+			current_floor 		=> current_floor,
+			door_open     		=> door_open_sig,
+			door_closing  		=> door_closing_sig,
+			dir_up        		=> dir_up_sig,
+			dir_down      		=> dir_down_sig,
+			estop_active  		=> estop_active
 		);
 
 	-- TRAVEL TIMER

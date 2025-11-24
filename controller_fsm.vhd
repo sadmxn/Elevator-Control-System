@@ -10,15 +10,15 @@ ENTITY controller_fsm IS
 		N_FLOORS : integer := 4
 	);
 	PORT (
-		clk         : IN  std_logic;
-		hard_reset  : IN  std_logic;  -- ACTIVE-HIGH
-		soft_reset  : IN  std_logic;  -- ACTIVE-HIGH
-		estop       : IN  std_logic;  -- ACTIVE-HIGH
+		clk        : IN  std_logic;
+		hard_reset : IN  std_logic;  -- ACTIVE-HIGH
+		soft_reset : IN  std_logic;  -- ACTIVE-HIGH
+		estop      : IN  std_logic;  -- ACTIVE-HIGH
 
 		-- From scheduler
-		has_above   : IN  std_logic;
-		has_below   : IN  std_logic;
-		here_req    : IN  std_logic;
+		has_above : IN  std_logic;
+		has_below : IN  std_logic;
+		here_req  : IN  std_logic;
 
 		-- FROM timers
 		travel_done 	 : IN  std_logic;
@@ -64,8 +64,8 @@ ARCHITECTURE LogicFunction OF controller_fsm IS
     signal current_floor_int : integer range 0 to 3 := 0; -- Internal floor index as integer 0..3
 
     signal clear_req_reg     : std_logic_vector(N_FLOORS-1 downto 0) := (others => '0');
-
-    signal travel_en_reg     : std_logic := '0';
+    
+	 signal travel_en_reg     : std_logic := '0';
     signal door_en_reg       : std_logic := '0';
     signal door_close_en_reg : std_logic := '0';
 
@@ -88,20 +88,20 @@ BEGIN
 				door_close_en_reg <= '0';			
 				
 			ELSIF soft_reset = '1' THEN 	-- SOFT reset: reset logic, preserve floor & direction
-				state         <= IDLE;
-				travel_en_reg <= '0';
-				door_en_reg   <= '0';
+				state         		<= IDLE;
+				travel_en_reg  	<= '0';
+				door_en_reg   		<= '0';
 				door_close_en_reg <= '0';            
 			ELSE
 				 
 				IF estop = '1' THEN 		   -- ESTOP: override FSM to ESTOP_STATE
-					state         <= ESTOP_STATE;
-					travel_en_reg <= '0';
-					door_en_reg   <= '0';
+					state         		<= ESTOP_STATE;
+					travel_en_reg 		<= '0';
+					door_en_reg   		<= '0';
 					door_close_en_reg <= '0';                
 			ELSE									-- Normal FSM update
-               state     <= next_state; 
-               direction <= next_direction;
+               state     	  <= next_state; 
+               direction     <= next_direction;
 					clear_req_reg <= (OTHERS => '0'); -- Default: no clear_req unless we explicitly set it
 					
 ------------------------------------------
@@ -164,7 +164,7 @@ BEGIN
             WHEN IDLE =>
                 IF here_req = '1' THEN
                     next_state     <= DOOR_OPEN_STATE;
-                    next_direction <= direction;  -- Keep last dir
+                    next_direction <= direction;  -- Keep last direcction
                 ELSIF has_above = '1' THEN
                     next_state     <= MOVE_UP;
                     next_direction <= DIR_UP_ST;
@@ -256,9 +256,9 @@ BEGIN
 
    estop_active <= '1' WHEN state = ESTOP_STATE ELSE '0';
 
-   clear_req        <= clear_req_reg;
-   travel_enable    <= travel_en_reg;
-   door_enable      <= door_en_reg;
+   clear_req         <= clear_req_reg;
+   travel_enable     <= travel_en_reg;
+   door_enable       <= door_en_reg;
    door_close_enable <= door_close_en_reg;
 	 
 END ARCHITECTURE LogicFunction;

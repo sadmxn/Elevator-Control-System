@@ -1,3 +1,5 @@
+-- Sheikh Mohammad Sadman Sakib-301604533; Kenny Nguyen-301614035 ; Rodrigo Villalon-301621226
+
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 
