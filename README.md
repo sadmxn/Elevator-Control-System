@@ -1,6 +1,6 @@
 # ENSC252-Final-Project
 
-ENSC 252 Final Project at SFU: Simple Elevator Control System on a DE-10 Standard Altera FPGA
+ENSC 252 Final Project at SFU: Simple Elevator Control System on a DE-10 Standard Altera FPGA using VHDL
 
 Contributors on this project:
 
